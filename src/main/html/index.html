@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <title>Space Ghost</title>
+        <script type="text/javascript" language="JavaScript" src="collisions.js"></script>
+        <script type="text/javascript" language="JavaScript" src="alone.js"></script>
+        <script type="text/javascript" language="JavaScript" src="leveldata.js"></script>
+        <script type="text/javascript" language="JavaScript">
+            window.onload = function() {
+
+                var canvasWidth = 800;
+                var canvasHeight = 600;
+                var fps = 20;
+
+                var canvas = document.getElementById("AloneCanvas");
+                canvas.width = canvasWidth;
+                canvas.height = canvasHeight;
+
+                var context = canvas.getContext("2d");
+                context.fillStyle = "#000000";
+                context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+                var resources = alone.createResources(canvasWidth, canvasHeight, leveldata, fps);
+                var gameState = alone.createInitialGameState(resources);
+                document.onkeypress = function(evt) {
+                    alone.handleKeyboardPress(evt, evt.charCode, gameState, resources);
+                    return true;
+                };
+                document.onkeydown = function(evt) {
+                    if( evt.keyCode == alone.SpecialKeyCodes.BackSpace) {
+                        evt.preventDefault();
+                    } else if( evt.keyCode == alone.SpecialKeyCodes.Space ) {
+                        evt.preventDefault();
+                        // pass as though it were a space
+                        alone.handleKeyboardPress(evt, 32, gameState, resources);
+                    }
+                    alone.handleKeyboardDown(evt, gameState, resources);
+                }
+
+                var toCanvasCoordinates = function(e) {
+
+                    var x;
+                    var y;
+                    if (e.pageX || e.pageY) {
+                      x = e.pageX;
+                      y = e.pageY;
+                    }
+                    else {
+                      x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                      y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+                    }
+                    x -= canvas.offsetLeft;
+                    y -= canvas.offsetTop;
+
+                    return {"x":x, "y":y};
+                };
+
+                canvas.onmousemove = function(evt) {
+                    var canvasCoords = toCanvasCoordinates(evt);
+                    alone.handleMouseEvent(canvasCoords.x, canvasCoords.y, false, gameState, resources);
+                };
+
+                canvas.onmousedown = function(evt) {
+                    var canvasCoords = toCanvasCoordinates(evt);
+                    alone.handleMouseEvent(canvasCoords.x, canvasCoords.y, true, gameState, resources);
+                };
+
+                var intervalId = window.setInterval(
+                        function(){
+                            alone.doCycle(context, gameState, resources);
+                        },
+                        1000/fps
+                );
+            }
+
+        </script>
+    </head>
+    <body bgcolor="#333333" style="color: white">
+        <p align="center">
+            <b>Space Ghost</b>
+            <br/>
+        <canvas id="AloneCanvas">
+
+        </canvas>
+            </p>
+        <p>
+            <br/>
+            Enter a function of time then type 'L' followed by enter to launch. Eg
+            <pre>
+            x=t*t
+            y=t
+            L
+            </pre>
+            The up and down arrow keys can be used to scroll between previously entered formula<br/>
+
+            Only tested in Chrome and Safari<br/>
+
+            Scroll down for spoilers and hints, otherwise try typing '?' and hitting enter for some basic help. <br/>
+    </p>
+    <p></p>
+    <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+        <p></p>
+        <br/>
+    <p>
+        To solve the first level try typing in
+        <pre>
+            x = 0
+            y = t
+        </pre>
+        Other useful expressions you might want to try are<br/>
+        <pre>
+        Math.sin(t*Math.PI*2)
+        Math.sqrt(t)
+        </pre>
+    </p>
+    <p>
+        You can also declare temporary variables, so stuff like<br/>
+        <pre>
+        a = Math.PI*t
+        sin = Math.sin(a)
+        cos = Math.cos(a)
+        l = t/10
+        x = sin*l + cos*l
+        y = cos*l - sin*l
+        </pre>
+        is valid
+    </p>
+    </body>
+</html>
